@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Pink Forest Classifier 🌸</title>
+    <style>
+        body {
+            background-color: #ffe6f0;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        .metric {
+            background: white;
+            border-radius: 8px;
+            margin: 10px auto;
+            padding: 15px;
+            width: 60%;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.2s;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 1s forwards;
+        }
+        .metric:hover {
+            transform: scale(1.05);
+        }
+        @keyframes fadeInUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        h1 { color: #e91e63; }
+        #grafico { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Análise de Dados sobre Câncer de Mama com IA <img src="/static/images/fita-de-cancer.png" alt="Fita Rosa" style="height: 48px; vertical-align: middle; margin-right: 8px;"></h1>
+
+    <div id="resultados">
+        Carregando resultados...
+    </div>
+
+    <div id="grafico"></div>
+
+    <script>
+        let resultadosData = {};  // Variável global para guardar os resultados da API
+
+        function mostrarGrafico(tipo) {
+            const graficoDiv = document.getElementById('grafico');
+            let imgSrc = '';
+            let titulo = '';
+            let analise = '';
+
+            if (tipo === 'auc_roc') {
+                imgSrc = '/static/images/auc_roc.png';
+                titulo = 'Curva ROC';
+                analise = `A AUC-ROC foi de ${resultadosData.auc_roc.toFixed(2)}. Isso indica a capacidade do modelo de distinguir entre tumores benignos e malignos. Quanto mais próximo de 1, melhor.`;
+            } else if (tipo === 'precision') {
+                imgSrc = '/static/images/precision.png';
+                titulo = 'Gráfico de Precisão (TP vs FP)';
+                analise = `A precisão foi de ${resultadosData.precision.toFixed(2)}. Isso significa que, entre as previsões positivas feitas, ${resultadosData.precision} estavam corretas (baixo número de falsos positivos).`;
+            } else if (tipo === 'recall') {
+                imgSrc = '/static/images/recall.png';
+                titulo = 'Gráfico de Sensibilidade (TP vs FN)';
+                analise = `O recall foi de ${resultadosData.recall.toFixed(2)}. Isso indica que o modelo identificou corretamente ${resultadosData.recall} dos casos positivos reais.`;
+            } else if (tipo === 'f1_score') {
+                imgSrc = '/static/images/f1_score.png';
+                titulo = 'Gráfico F1-Score';
+                analise = `O F1-Score foi de ${resultadosData.f1_score.toFixed(2)}. Esse valor reflete o equilíbrio entre Precisão e Sensibilidade.`;
+            } else {
+                graficoDiv.innerHTML = '<p>Gráfico não disponível.</p>';
+                return;
+            }
+
+            graficoDiv.innerHTML = `
+                <h2>${titulo}</h2>
+                 <img src="${imgSrc}" alt="${titulo}" style="width: 100%; max-width: 400px; height: auto; border: 2px solid #e91e63; border-radius: 8px;"/>
+                <p style="margin-top:10px; color:#333; font-style: italic;">${analise}</p>
+            `;
+        }
+
+        // Buscar os resultados da API
+        fetch('/api/resultados')
+            .then(response => response.json())
+            .then(data => {
+                resultadosData = data;
+
+                const div = document.getElementById('resultados');
+                div.innerHTML = `
+                    <div class="metric" onclick="mostrarGrafico('precision')" style="animation-delay: 0.2s;">
+                        🔍 <strong>Precisão:</strong> Mede a proporção de verdadeiros positivos entre os classificados como positivos.
+                    </div>
+                    <div class="metric" onclick="mostrarGrafico('recall')" style="animation-delay: 0.4s;">
+                        ❤️ <strong>Sensibilidade (Recall):</strong> Mede a capacidade de encontrar todos os positivos reais.
+                    </div>
+                    <div class="metric" onclick="mostrarGrafico('f1_score')" style="animation-delay: 0.6s;">
+                        ⚖️ <strong>F1-Score:</strong> Balanceia Precisão e Sensibilidade.
+                    </div>
+                    <div class="metric" onclick="mostrarGrafico('auc_roc')" style="animation-delay: 0.8s;">
+                        📈 <strong>AUC-ROC:</strong> Mede a capacidade do modelo em distinguir entre as classes.
+                    </div>
+                `;
+            })
+            .catch(error => {
+                document.getElementById('resultados').innerText = 'Erro ao carregar os resultados.';
+                console.error(error);
+            });
+    </script>
+</body>
+</html>
