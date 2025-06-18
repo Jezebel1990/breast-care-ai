@@ -2,6 +2,8 @@
 
  > Este projeto demonstra o uso de Machine Learning (Random Forest) para análise de dados relacionados ao diagnóstico de câncer de mama, com backend em Python (Flask) e frontend simples em HTML, CSS e JavaScript.
 
+![page](./static/images/page.gif)
+
  ##  Objetivo
 Visualizar de forma interativa as principais métricas de avaliação de um modelo de classificação binária (Benigno x Maligno), com foco em conscientização, educação e interpretação de resultados de IA na saúde.
 
