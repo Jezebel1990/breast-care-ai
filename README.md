@@ -4,6 +4,8 @@
 
 ![page](./static/images/page.gif)
 
+🖥️ Para ver o projeto funcionando, acesse: [https://breast-care-ai.onrender.com](https://breast-care-ai.onrender.com/)
+
  ##  Objetivo
 Visualizar de forma interativa as principais métricas de avaliação de um modelo de classificação binária (Benigno x Maligno), com foco em conscientização, educação e interpretação de resultados de IA na saúde.
 
